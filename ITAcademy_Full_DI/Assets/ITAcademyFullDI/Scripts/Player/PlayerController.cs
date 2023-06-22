@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,17 +10,45 @@ namespace ITAcademy.FullDI
 
         private PlayerType _type;
         private float _speed;
+        private List<WeaponBase> _weapons;
+        private EnemyService _enemyService;
 
-        public void Initialize(PlayerInput input, PlayerType type, float speed)
+        public void Initialize(PlayerInput input, EnemyService enemyService, PlayerType type, float speed)
         {
             _input = input;
+            _enemyService = enemyService;
             _speed = speed;
             _type = type;
 
+            _weapons = new List<WeaponBase>();
             AddListeners();
         }
 
         public Vector3 GetPosition() => transform.position;
+
+        private void Update()
+        {
+            WeaponProcessing();
+        }
+
+        private void WeaponProcessing()
+        {
+            _weapons.ForEach(weapon =>
+            {
+                var weaponPos = weapon.GetPosition();
+                var paramsToEnemy = _enemyService.GetEnemyClosestTo(weaponPos);
+                if (paramsToEnemy.HasValue)
+                {
+                    weapon.UpdateTarget(paramsToEnemy.Value.Position, paramsToEnemy.Value.Distance);
+                }
+                else
+                {
+                    weapon.ResetTarget();
+                }
+                
+                weapon.Tick();
+            });
+        }
 
         private void AddListeners()
         {
@@ -41,6 +70,12 @@ namespace ITAcademy.FullDI
         private void OnDestroy()
         {
             RemoveListeners();
+        }
+
+        public void AddWeapon(GameObject prefab, WeaponBase weapon)
+        {
+            weapon.AddOriginElement(transform);
+            _weapons.Add(weapon);
         }
     }
 }

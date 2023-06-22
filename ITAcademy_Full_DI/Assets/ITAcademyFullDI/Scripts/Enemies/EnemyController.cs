@@ -21,7 +21,7 @@ namespace ITAcademy.FullDI
 
             _agent.speed = _speed;
 
-            StartBehavior();
+            //StartBehavior();
         }
 
         private void StartBehavior()
@@ -37,5 +37,7 @@ namespace ITAcademy.FullDI
 
             _agent.SetDestination(playerController.GetPosition());
         }
+
+        public Vector3 GetPosition() => transform.position;
     }
 }
