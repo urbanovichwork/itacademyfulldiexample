@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
 
@@ -21,17 +23,53 @@ namespace ITAcademy.FullDI
             _enemyFactory = enemyFactory;
         }
 
-        void IInitializable.Initialize()
+        async void IInitializable.Initialize()
         {
             _playerFactory.Create(PlayerType.Paladin);
-            _playerFactory.PlayerController.AddWeapon(null,
-                new Pistol(_allWeapons.GetWeaponInfo(WeaponType.Pistol), _bullet));
+            _playerFactory.PlayerController
+                .AddWeapon(null, new Pistol(_allWeapons.GetWeaponInfo(WeaponType.Pistol), _bullet)).Forget();
             //_playerFactory.PlayerController.AddWeapon(null,
             //    new AutomatedPistol((WeaponAutomatedInfo) _allWeapons.GetWeaponInfo(WeaponType.Automat), _bullet));
-            _enemyFactory.Create(EnemyType.Troll);
-            _enemyFactory.Create(EnemyType.Ogr);
-            _enemyFactory.Create(EnemyType.Ogr);
-            _enemyFactory.Create(EnemyType.Troll);
+            CreateEnemies().Forget();
+            Debug.Log("HELLO");
+
+            UniTask<GameObject> obj1Task = PlayerCreation();
+            UniTask<GameObject> obj2Task = Player2Creation();
+            var result = await UniTask.WhenAll(obj1Task, obj2Task);
+            Debug.Log($"CONTINUE {result.Item1} and {result.Item2}");
+            //await PlayerAnimationWelcome();
+            //await EnemyCreation();
+            //await EnemyAnimationWelcome();
+            //await CameraLookThroughLevel();
+            //StartGameplay();
+        }
+
+        private async UniTask<GameObject> PlayerCreation()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(2));
+            Debug.Log("PLAYER 1 CREATED");
+            return new GameObject();
+        }
+
+        private async UniTask<GameObject> Player2Creation()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(3));
+            Debug.Log("PLAYER 2 CREATED");
+            return new GameObject();
+        }
+
+        private async UniTaskVoid CreateEnemies()
+        {
+            await _enemyFactory.Create(EnemyType.Troll);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            Debug.Log("ENEMY 1");
+            await _enemyFactory.Create(EnemyType.Ogr);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            Debug.Log("ENEMY 2");
+            await _enemyFactory.Create(EnemyType.Ogr);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            Debug.Log("ENEMY 3");
+            await _enemyFactory.Create(EnemyType.Troll);
         }
     }
 }

@@ -15,7 +15,15 @@ MonoBehaviour:
   <Enemies>k__BackingField:
   - <Type>k__BackingField: 0
     <Speed>k__BackingField: 1
-    <Prefab>k__BackingField: {fileID: 2326254314740928845, guid: eaafa29a9e3533b4db1d6f54494ce1c9, type: 3}
+    <PrefabReference>k__BackingField:
+      m_AssetGUID: eaafa29a9e3533b4db1d6f54494ce1c9
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
   - <Type>k__BackingField: 1
     <Speed>k__BackingField: 2
-    <Prefab>k__BackingField: {fileID: 538542231333174009, guid: 1110bdfb8cd53194e95fe0b1149ae9ac, type: 3}
+    <PrefabReference>k__BackingField:
+      m_AssetGUID: 1110bdfb8cd53194e95fe0b1149ae9ac
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

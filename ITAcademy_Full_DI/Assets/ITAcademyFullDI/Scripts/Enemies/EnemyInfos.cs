@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace ITAcademy.FullDI
 {
@@ -24,6 +25,6 @@ namespace ITAcademy.FullDI
     {
         [field: SerializeField] public EnemyType Type { get; private set; }
         [field: SerializeField] public float Speed { get; private set; }
-        [field: SerializeField] public GameObject Prefab { get; private set; }
+        [field: SerializeField] public AssetReference PrefabReference { get; private set; }
     }
 }

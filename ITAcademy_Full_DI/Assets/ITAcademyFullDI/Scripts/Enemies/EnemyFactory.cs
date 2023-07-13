@@ -1,4 +1,6 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace ITAcademy.FullDI
 {
@@ -15,10 +17,11 @@ namespace ITAcademy.FullDI
             _enemyInfos = enemyInfos;
         }
 
-        public void Create(EnemyType enemyType)
+        public async UniTask Create(EnemyType enemyType)
         {
             var enemyInfo = _enemyInfos.GetEnemy(enemyType);
-            var enemyObject = Object.Instantiate(enemyInfo.Prefab);
+            var prefab = await Addressables.LoadAssetAsync<GameObject>(enemyInfo.PrefabReference).ToUniTask();
+            var enemyObject = Object.Instantiate(prefab);
             var randomPointInCircle = Random.insideUnitCircle * 10f;
             enemyObject.transform.position = new Vector3(randomPointInCircle.x, 0, randomPointInCircle.y);
             var enemyController = enemyObject.GetComponent<EnemyController>();

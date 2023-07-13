@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -46,7 +48,7 @@ namespace ITAcademy.FullDI
                     weapon.ResetTarget();
                 }
                 
-                weapon.Tick();
+                //weapon.Tick();
             });
         }
 
@@ -72,10 +74,13 @@ namespace ITAcademy.FullDI
             RemoveListeners();
         }
 
-        public void AddWeapon(GameObject prefab, WeaponBase weapon)
+        public async UniTaskVoid AddWeapon(GameObject prefab, WeaponBase weapon)
         {
             weapon.AddOriginElement(transform);
+            weapon.StartShootingProcess().Forget();
             _weapons.Add(weapon);
+            await UniTask.Delay(TimeSpan.FromSeconds(5));
+            weapon.CancelShootingProcess();
         }
     }
 }

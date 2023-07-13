@@ -1,5 +1,6 @@
 using System;
 using UniRx;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,7 +8,8 @@ namespace ITAcademy.FullDI
 {
     public class EnemyController : MonoBehaviour
     {
-        [SerializeField] private NavMeshAgent _agent;
+        [SerializeField] private float _radius;
+        [Range(0, 1)] [SerializeField] private NavMeshAgent _agent;
 
         private PlayerFactory _playerFactory;
         private EnemyType _enemyType;
@@ -39,5 +41,14 @@ namespace ITAcademy.FullDI
         }
 
         public Vector3 GetPosition() => transform.position;
+
+#if UNITY_EDITOR
+        private void OnDrawGizmosSelected()
+        {
+            Handles.color = Color.red;
+            Handles.DrawWireDisc(transform.position, transform.up, _radius);
+            Handles.color = Color.white;
+        }
+#endif
     }
 }

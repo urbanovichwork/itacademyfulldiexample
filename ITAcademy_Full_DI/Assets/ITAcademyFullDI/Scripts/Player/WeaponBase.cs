@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace ITAcademy.FullDI
 {
@@ -13,12 +16,14 @@ namespace ITAcademy.FullDI
         protected Vector3 LookDirection { get; private set; }
 
         private float _delayTemp;
+        private CancellationTokenSource _cancellationTokenSource;
 
         protected WeaponBase(float fireDelay, float fireDistance, GameObject bulletPrefab)
         {
             FireDelay = fireDelay;
             FireDistance = fireDistance;
             BulletPrefab = bulletPrefab;
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public void AddOriginElement(GameObject visualObject)
@@ -75,6 +80,26 @@ namespace ITAcademy.FullDI
                     Fire(LookDirection);
                 }
             }
+        }
+
+        public async UniTaskVoid StartShootingProcess()
+        {
+            Shoot();
+            await UniTask.Delay(TimeSpan.FromSeconds(FireDelay), cancellationToken: _cancellationTokenSource.Token).SuppressCancellationThrow();
+            if (!_cancellationTokenSource.IsCancellationRequested)
+            {
+                StartShootingProcess().Forget();
+            }
+        }
+
+        public void CancelShootingProcess()
+        {
+            _cancellationTokenSource.Cancel();
+        }
+
+        private void Shoot()
+        {
+            Fire(LookDirection);
         }
 
         private void Rotate(Vector3 direction)
